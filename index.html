@@ -7,10 +7,32 @@
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 </head>
 <body>
-    <h1>Hello World!</h1>
-    <input type="button" value="Get Server Data" id="getServerData" />
+    <h1>Viktoriia Morozova's ISIT420 Restaurant Static Web Application</h1>
     <div>
-        <table id = "tableResult"></table>
+        <input type="button" value="Get All Restaurants" id="getServerData"  />
+        <br /><br /><br />
+  
+        <input type="button" value="Get Restaurants For This City" id="getCity"  /> 
+        <input type="text" value="" id="whichCity" /><br /><br /><br />
+         
+        <table id="tableResult">
+        </table>
     </div>
+  
+    <div>
+        <h2>Enter a new Review</h2>
+        Enter restaurant name <br />
+        <input type="text" value="" id="name" /><br />
+        Enter city <br />
+        <input type="text" value="" id="city" /><br />
+        Enter cuisine <br />
+        <input type="text" value="" id="cuisine" /><br />
+        Enter number of stars, from bad 1 to very good 5 <br />
+        <input type="text" value="" id="stars" /><br />
+        Enter poster's name <br />
+        <input type="text" value="" id="poster" /><br />
+        <input type="button" value="Post New Review" id="postreview"  />
+    </div>
+  
     <script src="index.js"></script>
 </body>

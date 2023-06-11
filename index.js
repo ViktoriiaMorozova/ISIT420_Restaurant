@@ -1,54 +1,95 @@
-// start by creating data so we don't have to type it in each time
-let dataArray = [];
-dataArray.push("first");
-dataArray.push("second");
-dataArray.push("third");
+const writerUrl = "https://viktoriarestaurantwriter.azurewebsites.net/api/viktoriarestaurantwriter";
+const readerUrl = "https://viktoriarestaurantreader.azurewebsites.net/api/viktoriarestaurantreader";
+
+// define a constructor to create  objects
+const ReviewObject = function (name, city, cuisine, stars, poster) {
+  this.name = name;
+  this.city = city;
+  this.cuisine = cuisine;
+  this.stars = stars;
+  this.poster = poster;
+};
 
 document.addEventListener("DOMContentLoaded", function () {
   document
-    .getElementById("getServerData")
+    .getElementById("getAllReviews")
     .addEventListener("click", function () {
-      createList();
+      readReviews("all");
+    });
+
+  document.getElementById("getCityReviews")
+    .addEventListener("click", function () {
+      readReviews(document.getElementById("city").value);
+    });
+
+  document.getElementById("postreview")
+    .addEventListener("click", function () {
+      postNewReview();
     });
 });
 
-function createList() {
-  // run on Azure
+function postNewReview() {
+  const newReview = new ReviewObject(
+    document.getElementById("name").value,
+    document.getElementById("city").value,
+    document.getElementById("cuisine").value,
+    parseInt(document.getElementById("stars").value),
+    document.getElementById("poster").value
+  );
+  console.log("new review: " + JSON.stringify(newReview));
+
+  $.ajax({
+    url: writerUrl,
+    type: "POST",
+    data: JSON.stringify(newReview),
+    contentType: "application/json; charset=utf-8",
+    success: function (result) {
+      console.log("postNewReview result: " + result);
+      document.getElementById("name").value = "";
+      document.getElementById("city").value = "";
+      document.getElementById("cuisine").value = "";
+      document.getElementById("stars").value = "";
+      document.getElementById("poster").value = "";
+    },
+  });
+}
+
+function readReviews(city) {
   $.get(
-    "https://viktoriarestaurantwriter.azurewebsites.net/api/viktoriarestaurantwriter",
+    readerUrl + "?city=" + city,
     function (data, status) {
-      dataArray = JSON.parse(data);
-      console.log(dataArray);
+      console.log("readReviews request status: " + status);
 
       //clear prior data
-      let table = document.getElementById("tableResult");
-      table.innerHTML = ""; // remove previous data
+      const table = document.getElementById("tableResult");
+      table.innerHTML = "";
 
-      var header = table.createTHead();
-      var hRow = header.insertRow(0);
-      var hCell1 = hRow.insertCell(0);
-      var hCell2 = hRow.insertCell(1);
-      var hCell3 = hRow.insertCell(2);
-      var hCell4 = hRow.insertCell(3);
-      var hCell5 = hRow.insertCell(4);
+      const items = JSON.parse(data);
+      const header = table.createTHead();
+      const hRow = header.insertRow(0);
+      const hCell1 = hRow.insertCell(0);
+      const hCell2 = hRow.insertCell(1);
+      const hCell3 = hRow.insertCell(2);
+      const hCell4 = hRow.insertCell(3);
+      const hCell5 = hRow.insertCell(4);
       hCell1.innerHTML = "<b>Name</b>";
       hCell2.innerHTML = "<b>City</b>";
       hCell3.innerHTML = "<b>Cuisine</b>";
       hCell4.innerHTML = "<b>Stars</b>";
       hCell5.innerHTML = "<b>Poster</b>";
 
-      for (let i = 0; i < dataArray.length; i++) {
-        let row = table.insertRow(-1);
-        let cell1 = row.insertCell(0);
-        let cell2 = row.insertCell(1);
-        let cell3 = row.insertCell(2);
-        let cell4 = row.insertCell(3);
-        let cell5 = row.insertCell(4);
-        cell1.innerHTML = dataArray[i].name;
-        cell2.innerHTML = dataArray[i].city;
-        cell3.innerHTML = dataArray[i].cuisine;
-        cell4.innerHTML = dataArray[i].stars;
-        cell5.innerHTML = dataArray[i].poster;
+      for (const item of items) {
+        const row = table.insertRow(-1);
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        const cell3 = row.insertCell(2);
+        const cell4 = row.insertCell(3);
+        const cell5 = row.insertCell(4);
+        cell1.innerHTML = item.name;
+        cell2.innerHTML = item.city;
+        cell3.innerHTML = item.cuisine;
+        cell4.innerHTML = item.stars;
+        cell5.innerHTML = item.poster;
       }
     }
   );
