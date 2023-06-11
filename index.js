@@ -3,13 +3,17 @@ const writerUrl =
 const readerUrl =
   "https://viktoriarestaurantreader.azurewebsites.net/api/viktoriarestaurantreader";
 
+const MONGO = "mongo";
+const PUBSUB = "pubsub";
+
 // define a constructor to create  objects
-const ReviewObject = function (name, city, cuisine, stars, poster) {
+const ReviewObject = function (name, city, cuisine, stars, poster, target) {
   this.name = name;
   this.city = city;
   this.cuisine = cuisine;
   this.stars = stars;
   this.poster = poster;
+  this.target = target || PUBSUB;
 };
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -25,18 +29,26 @@ document.addEventListener("DOMContentLoaded", function () {
       readReviews(document.getElementById("cityName").value);
     });
 
-  document.getElementById("postreview").addEventListener("click", function () {
-    postNewReview();
-  });
+  document
+    .getElementById("postReviewPubSub")
+    .addEventListener("click", function () {
+      postNewReview(PUBSUB);
+    });
+  document
+    .getElementById("postReviewMongo")
+    .addEventListener("click", function () {
+      postNewReview(MONGO);
+    });
 });
 
-function postNewReview() {
+function postNewReview(target) {
   const newReview = new ReviewObject(
     document.getElementById("name").value,
     document.getElementById("city").value,
     document.getElementById("cuisine").value,
     parseInt(document.getElementById("stars").value),
-    document.getElementById("poster").value
+    document.getElementById("poster").value,
+    target
   );
   console.log("new review: " + JSON.stringify(newReview));
 
