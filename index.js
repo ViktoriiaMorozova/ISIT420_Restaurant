@@ -44,6 +44,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function postNewReview(target) {
+  $.get(listenerUrl, (a, b) => {});
+
   const newReview = new ReviewObject(
     document.getElementById("name").value,
     document.getElementById("city").value,
@@ -54,21 +56,19 @@ function postNewReview(target) {
   );
   console.log("new review: " + JSON.stringify(newReview));
 
-  $.get(listenerUrl, (a, b) => {
-    $.ajax({
-      url: writerUrl,
-      type: "POST",
-      data: JSON.stringify(newReview),
-      contentType: "application/json; charset=utf-8",
-      success: function (result) {
-        console.log("postNewReview result: " + result);
-        document.getElementById("name").value = "";
-        document.getElementById("city").value = "";
-        document.getElementById("cuisine").value = "";
-        document.getElementById("stars").value = "";
-        document.getElementById("poster").value = "";
-      },
-    });  
+  $.ajax({
+    url: writerUrl,
+    type: "POST",
+    data: JSON.stringify(newReview),
+    contentType: "application/json; charset=utf-8",
+    success: function (result) {
+      console.log("postNewReview result: " + result);
+      document.getElementById("name").value = "";
+      document.getElementById("city").value = "";
+      document.getElementById("cuisine").value = "";
+      document.getElementById("stars").value = "";
+      document.getElementById("poster").value = "";
+    },
   });
 }
 
@@ -109,3 +109,5 @@ function readReviews(city) {
     }
   });
 }
+
+$.get(listenerUrl, (a, b) => {});
