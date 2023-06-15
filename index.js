@@ -2,6 +2,8 @@ const writerUrl =
   "https://viktoriarestaurantwriter.azurewebsites.net/api/viktoriarestaurantwriter";
 const readerUrl =
   "https://viktoriarestaurantreader.azurewebsites.net/api/viktoriarestaurantreader";
+const listenerUrl =
+  "https://viktoriarestaurantpubsublistener.azurewebsites.net/";
 
 const MONGO = "mongo";
 const PUBSUB = "pubsub";
@@ -52,19 +54,21 @@ function postNewReview(target) {
   );
   console.log("new review: " + JSON.stringify(newReview));
 
-  $.ajax({
-    url: writerUrl,
-    type: "POST",
-    data: JSON.stringify(newReview),
-    contentType: "application/json; charset=utf-8",
-    success: function (result) {
-      console.log("postNewReview result: " + result);
-      document.getElementById("name").value = "";
-      document.getElementById("city").value = "";
-      document.getElementById("cuisine").value = "";
-      document.getElementById("stars").value = "";
-      document.getElementById("poster").value = "";
-    },
+  $.get(listenerUrl, (a, b) => {
+    $.ajax({
+      url: writerUrl,
+      type: "POST",
+      data: JSON.stringify(newReview),
+      contentType: "application/json; charset=utf-8",
+      success: function (result) {
+        console.log("postNewReview result: " + result);
+        document.getElementById("name").value = "";
+        document.getElementById("city").value = "";
+        document.getElementById("cuisine").value = "";
+        document.getElementById("stars").value = "";
+        document.getElementById("poster").value = "";
+      },
+    });  
   });
 }
 
